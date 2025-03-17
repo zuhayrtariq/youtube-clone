@@ -57,11 +57,12 @@ export async function POST(req: Request) {
         if (last_name) {
             fullName = first_name + last_name
         }
-        await db.insert(usersTable).values({
+        const data = await db.insert(usersTable).values({
             clerkId: id,
             name: fullName,
             imageUrl: image_url
         })
+        console.log("Done User Added", data)
     }
 
     if (eventType == 'user.deleted') {
@@ -69,7 +70,8 @@ export async function POST(req: Request) {
         if (!id) {
             return new Response("Missing User Id", { status: 400 })
         }
-        await db.delete(usersTable).where(eq(usersTable.clerkId, id))
+        const res = await db.delete(usersTable).where(eq(usersTable.clerkId, id))
+        console.log("Res : ", res)
     }
 
     if (eventType == 'user.updated') {
@@ -82,6 +84,7 @@ export async function POST(req: Request) {
             name: fullName,
             imageUrl: image_url
         }).where(eq(usersTable.clerkId, id))
+        console.log("Done Updating")
     }
     return new Response('Webhook received', { status: 200 })
 }
