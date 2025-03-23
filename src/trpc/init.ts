@@ -38,7 +38,7 @@ export const protectedProcedure = t.procedure.use(async function isAuthenticated
     }
     const [user] = await db.select().from(usersTable).where(eq(usersTable.clerkId, ctx.clerkUserId)).limit(1);
     if (!user)
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "User Not Found in Database" });
 
 
     const { success } = await ratelimit.limit(user.id.toString());
