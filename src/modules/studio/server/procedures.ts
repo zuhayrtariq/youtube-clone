@@ -23,8 +23,10 @@ export const studioRouter = createTRPCRouter({
                 cursor ? or(lt(videosTable.updatedAt, cursor.updatedAt),
                     and(eq(videosTable.updatedAt, cursor.updatedAt), lt(videosTable.id, cursor.id))) : undefined
             )).orderBy(desc(videosTable.updatedAt), desc(videosTable.id)).limit(limit + 1);
+
             const hasMore = data.length > limit;
-            const items = hasMore ? data.slice(0. - 1) : data
+            const items = hasMore ? data.slice(0, - 1) : data
+
             const lastItem = items[items.length - 1]
             const nextCursor = hasMore ? {
                 id: lastItem.id,
