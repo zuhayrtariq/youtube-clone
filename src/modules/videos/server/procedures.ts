@@ -1,9 +1,11 @@
 import { db } from "@/db";
 import { z } from 'zod'
-import { videosTable } from "@/db/schema";
+import { videosTable, videoUpdateSchema } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { and, desc, eq, lt, min, or } from "drizzle-orm";
 import { mux } from "@/lib/mux";
+import { title } from "process";
+import { TRPCError } from "@trpc/server";
 
 export const videosRouter = createTRPCRouter({
     create: protectedProcedure.mutation(async ({ ctx }) => {
@@ -39,5 +41,34 @@ export const videosRouter = createTRPCRouter({
             url: upload.url,
             video: video
         }
+    }),
+    update: protectedProcedure.input(videoUpdateSchema).mutation(async ({ ctx, input }) => {
+        const { id: userId } = ctx.user;
+        const { title, description, categoryId, visibility, id } = input
+        if (!id) {
+            throw new TRPCError({ code: 'BAD_REQUEST' })
+        }
+        const [updatedVideo] = await db.update(videosTable).set({
+            title, description, categoryId, visibility,
+            updatedAt: new Date()
+        }).where(
+            and(
+                eq(videosTable.id, id),
+                eq(videosTable.userId, userId),
+            )
+        ).returning();
+        if (!updatedVideo) {
+            throw new TRPCError({ code: 'NOT_FOUND' })
+        } return updatedVideo
+    }),
+    remove: protectedProcedure.input(z.object({
+        id: z.string().uuid()
+    })).mutation(async ({ ctx, input }) => {
+        const { id: userId } = ctx.user;
+        const { id } = input;
+        const [removedVideo] = await db.delete(videosTable).where(and(eq(videosTable.id, id), eq(videosTable.userId, userId))).returning();
+        if (!removedVideo) {
+            throw new TRPCError({ code: 'NOT_FOUND' })
+        } return removedVideo
     })
 })

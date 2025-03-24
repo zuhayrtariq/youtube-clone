@@ -6,10 +6,11 @@ import { LoaderIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import StudioUploader from "./studio-uploader";
+import { useRouter } from "next/navigation";
 
 const StudioUploadModal = () => {
   const utils = trpc.useUtils();
-
+  const router = useRouter();
   const create = trpc.videos.create.useMutation({
     onSuccess: () => {
       toast.success("Video Created");
@@ -19,6 +20,14 @@ const StudioUploadModal = () => {
       toast.error(e.message);
     },
   });
+
+  const onSuccess = () => {
+    if (!create.data?.video.id) {
+      return;
+    }
+    create.reset();
+    router.push(`/studio/videos/${create.data.video.id}`);
+  };
   return (
     <>
       <ResponsiveModal
@@ -29,7 +38,7 @@ const StudioUploadModal = () => {
         }}
       >
         {create.data?.url ? (
-          <StudioUploader endpoint={create.data.url} onSuccess={() => {}} />
+          <StudioUploader endpoint={create.data.url} onSuccess={onSuccess} />
         ) : (
           <LoaderIcon />
         )}
