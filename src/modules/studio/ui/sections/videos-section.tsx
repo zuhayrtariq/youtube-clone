@@ -47,11 +47,11 @@ const VideosSectionSkeleton = () => {
           {Array.from({ length: 3 }).map((_, index) => (
             <TableRow key={index}>
               <TableCell className="font-medium">
-                <div className="flex items-center gap-4">
-                  <div className="relative aspect-video w-36 shrink-0">
+                <div className="flex  items-center gap-4">
+                  <div className="relative aspect-video w-36 ">
                     <Skeleton className="w-36 h-20" />
                   </div>
-                  <div className="flex flex-col overflow-hidden gap-y-1">
+                  <div className="flex  flex-col overflow-hidden gap-y-1">
                     <span className="text-sm line-clamp-1">
                       <Skeleton className="w-24 h-4" />
                     </span>
@@ -62,12 +62,12 @@ const VideosSectionSkeleton = () => {
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-x-1 capitalize ">
+                <div className="flex  items-center gap-x-1 capitalize ">
                   <Skeleton className="w-16 h-4" />
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex items-center capitalize">
+                <div className="flex  items-center capitalize">
                   <Skeleton className="w-16 h-4" />
                 </div>
               </TableCell>
@@ -75,17 +75,17 @@ const VideosSectionSkeleton = () => {
                 <Skeleton className="w-16 h-4" />
               </TableCell>
               <TableCell className="text-right ">
-                <div className="text-right flex justify-end">
+                <div className="text-right flex  justify-end">
                   <Skeleton className="w-8 h-4" />
                 </div>
               </TableCell>
               <TableCell className="text-right ">
-                <div className="text-right flex justify-end">
+                <div className="text-right flex  justify-end">
                   <Skeleton className="w-8 h-4" />
                 </div>
               </TableCell>
               <TableCell className="text-right  pr-6">
-                <div className="text-right flex justify-end">
+                <div className="text-right flex  justify-end">
                   <Skeleton className="w-8 h-4" />
                 </div>
               </TableCell>
@@ -130,8 +130,8 @@ const VideosSectionSuspense = () => {
                   legacyBehavior
                 >
                   <TableRow className="cursor-pointer">
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-4">
+                    <TableCell className="font-medium  ">
+                      <div className="flex  items-center gap-4 ">
                         <div className="relative aspect-video w-36 shrink-0">
                           <VideoThumbnail
                             title={video.title}
@@ -140,18 +140,18 @@ const VideosSectionSuspense = () => {
                             duration={video.duration || 0}
                           />
                         </div>
-                        <div className="flex flex-col overflow-hidden gap-y-1">
-                          <span className="text-sm line-clamp-1">
+                        <div className="flex  flex-col  overflow-hidden gap-y-1 max-w-[300px] ">
+                          <span className="text-sm line-clamp-1 truncate">
                             {video.title}
                           </span>
-                          <span className="text-xs text-muted-foreground line-clamp-1">
+                          <span className="text-xs text-muted-foreground  truncate ">
                             {video.description}
                           </span>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-x-1 capitalize ">
+                      <div className="flex  items-center gap-x-1 capitalize ">
                         {video.visibility == "private" ? (
                           <LockIcon className="size-4" />
                         ) : (
@@ -161,7 +161,7 @@ const VideosSectionSuspense = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center capitalize">
+                      <div className="flex  items-center capitalize">
                         {video.muxStatus}
                       </div>
                     </TableCell>

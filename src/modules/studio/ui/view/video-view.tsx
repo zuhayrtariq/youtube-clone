@@ -7,7 +7,7 @@ interface VideoViewProps {
 
 const VideoView = ({ videoId }: VideoViewProps) => {
   return (
-    <div className="px-4 pt-2.5  max-w-[1200px]">
+    <div className="px-4 pt-2.5   w-full">
       <VideoForm videoId={videoId} />
     </div>
   );

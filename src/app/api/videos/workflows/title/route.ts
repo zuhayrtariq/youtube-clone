@@ -1,7 +1,6 @@
 import { db } from "@/db"
 import { videosTable } from "@/db/schema"
 import { model } from "@/lib/gemini"
-import { trpc } from "@/trpc/server"
 import { serve } from "@upstash/workflow/nextjs"
 import { and, eq } from "drizzle-orm"
 const TITLE_SYSTEM_PROMPT = `Your task is to generate an SEO-focused title for a YouTube video based on its transcript. Please follow these guidelines:
@@ -20,6 +19,7 @@ interface InputType {
     userId: string
 }
 export const { POST } = serve(
+
     async (context) => {
         const input = context.requestPayload as InputType;
         const { userId, videoId } = input
