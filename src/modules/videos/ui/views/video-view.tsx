@@ -19,7 +19,7 @@ const VideoView = ({ videoId }: VideoViewProps) => {
           <CommentsSection />
         </div>
         <div className="hidden  w-full xl:w-[380px] 2xl:w-[460px] shrink xl:flex">
-          <SuggestionsSection />I am called
+          <SuggestionsSection />
         </div>
       </div>
     </div>

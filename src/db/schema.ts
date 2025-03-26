@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid, varchar, primaryKey } from "drizzle-orm/pg-core";
 import {
     createInsertSchema,
     createSelectSchema,
@@ -31,6 +31,7 @@ export const videosTable = pgTable('videos', {
     id: uuid('id').primaryKey().defaultRandom(),
     title: text().notNull(),
     description: text().notNull(),
+    views: integer().default(0).notNull(),
     muxStatus: text("mux_status"),
     muxAssetId: text("mux_asset_id").unique(),
     muxUploadId: text('mux_upload_id').unique(),
@@ -66,11 +67,84 @@ export const videoRelations = relations(videosTable, ({ one, many }) => ({
     category: one(categoriesTable, {
         fields: [videosTable.categoryId],
         references: [categoriesTable.id]
-    })
+    }),
+    views: many(videoViews),
+    reactions: many(videoReactions),
 }))
 
+export const videoViews = pgTable('video_views', {
+    userId: uuid('user_id').references(() => usersTable.id, { onDelete: 'cascade' }).notNull(),
+    videoId: uuid('video_id').references(() => videosTable.id, { onDelete: 'cascade' }).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+
+}, (t) => [
+    primaryKey({
+        name: "video_views_pk",
+        columns: [t.userId, t.videoId]
+    })
+])
+
+export const reactionType = pgEnum('reaction_type', ['like', 'dislike'])
+
+export const videoReactions = pgTable('video_reactions', {
+    userId: uuid('user_id').references(() => usersTable.id, { onDelete: 'cascade' }).notNull(),
+    videoId: uuid('video_id').references(() => videosTable.id, { onDelete: 'cascade' }).notNull(),
+    type: reactionType('type').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+
+}, (t) => [
+    primaryKey({
+        name: "video_reactions_pk",
+        columns: [t.userId, t.videoId]
+    })
+])
+
+export const videoViewRelations = relations(videoViews, ({ one, many }) => ({
+    users: one(
+        usersTable
+        , {
+            fields: [videoViews.userId],
+            references: [usersTable.id]
+        }),
+    videos: one(
+        videosTable
+        , {
+            fields: [videoViews.videoId],
+            references: [videosTable.id]
+        }),
+
+}))
+export const videoViewInsertSchema = createInsertSchema(videoViews)
+export const videoViewUpdateSchema = createUpdateSchema(videoViews)
+export const videoViewSelectSchema = createSelectSchema(videoViews)
+export const videoReactionRelations = relations(videoReactions, ({ one, many }) => ({
+    users: one(
+        usersTable
+        , {
+            fields: [videoReactions.userId],
+            references: [usersTable.id]
+        }),
+    videos: one(
+        videosTable
+        , {
+            fields: [videoReactions.videoId],
+            references: [videosTable.id]
+        }),
+
+}))
+
+
+export const videoReactionInsertSchema = createInsertSchema(videoReactions)
+export const videoReactionUpdateSchema = createUpdateSchema(videoReactions)
+export const videoReactionSelectSchema = createSelectSchema(videoReactions)
+
+
 export const userRelations = relations(usersTable, ({ many }) => ({
-    videos: many(videosTable)
+    videos: many(videosTable),
+    videoViews: many(videoViews),
+    videoReactions: many(videoReactions),
 }))
 
 

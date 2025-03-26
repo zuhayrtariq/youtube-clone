@@ -1,10 +1,9 @@
 import { db } from "@/db";
 import { z } from 'zod'
-import { usersTable, videosTable, videoUpdateSchema } from "@/db/schema";
+import { usersTable, videoReactions, videosTable, videoUpdateSchema, videoViews } from "@/db/schema";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { and, desc, eq, getTableColumns, lt, min, or } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, inArray, lt, min, or } from "drizzle-orm";
 import { mux } from "@/lib/mux";
-import { title } from "process";
 import { TRPCError } from "@trpc/server";
 import { UTApi } from "uploadthing/server";
 import { workflow } from "@/lib/workflow";
@@ -17,21 +16,69 @@ export const videosRouter = createTRPCRouter({
         id: z.string().uuid()
     })).query(async ({ input, ctx }) => {
         const { id: videoId } = input;
-        const [existingVideo] = await db.select(
+        const { clerkUserId } = ctx;
+        let userId;
+        const [user] = await db.select().from(usersTable).where(
+            inArray(usersTable.clerkId, clerkUserId ? [clerkUserId] : [])
+        )
+        if (user) {
+            userId = user.id;
+        }
+
+        const userReaction = db.$with('user_reaction').as(
+            db.select({
+                videoId: videoReactions.videoId,
+                type: videoReactions.type
+            }).from(videoReactions).where(
+                inArray(videoReactions.userId, userId ? [userId] : [])
+            )
+        )
+        const [existingVideo] = await db.with(userReaction).select(
             {
                 ...getTableColumns(videosTable),
                 user: {
                     ...getTableColumns(usersTable)
-                }
+                },
+                viewCount: db.$count(videoViews, eq(videoViews.videoId, videosTable.id)),
+                likeCount: db.$count(videoReactions, and(
+                    eq(videoReactions.videoId, videoId),
+                    eq(videoReactions.type, 'like')
+                )),
+                disLikeCount: db.$count(videoReactions, and(
+                    eq(videoReactions.videoId, videoId),
+                    eq(videoReactions.type, 'dislike')
+                )),
+                userReaction: userReaction.type
             }
-        ).from(videosTable).where(
-            eq(videosTable.id, videoId)
-        ).innerJoin(
+        ).from(videosTable).innerJoin(
             usersTable, eq(videosTable.userId, usersTable.id)
         )
+            .leftJoin(
+                userReaction, eq(videosTable.id, userReaction.videoId)
+            )
+            .where(
+                eq(videosTable.id, videoId)
+            )
+            .groupBy(
+                videosTable.id,
+                usersTable.id,
+                userReaction.type
+            )
         if (!existingVideo)
             throw new TRPCError({ code: 'NOT_FOUND' })
         return existingVideo
+    }),
+    addView: baseProcedure.input(z.object({
+        id: z.string().uuid()
+    })).mutation(async ({ input, ctx }) => {
+        const { id: videoId } = input;
+        const { workflowRunId } = await workflow.trigger({
+            url: process.env.UPSTASH_WORKFLOW_URL + "/api/videos/workflows/video-view",
+            body: {
+                videoId: input.id
+            }
+        })
+        return workflowRunId
     })
     ,
     generateTitle: protectedProcedure.input(z.object({
