@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
+import { useClerk } from "@clerk/nextjs";
 import { ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
@@ -21,16 +22,27 @@ const VideoReactions = ({
   videoId,
 }: VideoReactionProps) => {
   const utils = trpc.useUtils();
+  const clerk = useClerk();
   const likeReaction = trpc.videoReaction.likeReaction.useMutation({
     onSuccess: () => {
       toast.success("Reaction Updated");
       utils.videos.getOne.invalidate({ id: videoId });
+    },
+    onError: (e) => {
+      if (e.data?.code == "UNAUTHORIZED") {
+        clerk.openSignIn();
+      } else toast.error("Can not react to video");
     },
   });
   const dislikeReaction = trpc.videoReaction.dislikeReaction.useMutation({
     onSuccess: () => {
       toast.success("Reaction Updated");
       utils.videos.getOne.invalidate({ id: videoId });
+    },
+    onError: (e) => {
+      if (e.data?.code == "UNAUTHORIZED") {
+        clerk.openSignIn();
+      } else toast.error("Can not react to video");
     },
   });
 
@@ -50,6 +62,7 @@ const VideoReactions = ({
       <Button
         className="rounded-l-full rounded-r-none gap-2 pr-4"
         variant={"secondary"}
+        disabled={likeReaction.isPending || dislikeReaction.isPending}
         onClick={() => handleLikeReaction()}
       >
         <ThumbsUpIcon
@@ -61,6 +74,7 @@ const VideoReactions = ({
       <Button
         className="rounded-l-none rounded-r-full  pl-3"
         variant={"secondary"}
+        disabled={likeReaction.isPending || dislikeReaction.isPending}
         onClick={() => handleDislikeReaction()}
       >
         <ThumbsDownIcon
