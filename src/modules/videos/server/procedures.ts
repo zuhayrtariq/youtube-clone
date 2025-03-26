@@ -1,8 +1,8 @@
 import { db } from "@/db";
 import { z } from 'zod'
-import { videosTable, videoUpdateSchema } from "@/db/schema";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { and, desc, eq, lt, min, or } from "drizzle-orm";
+import { usersTable, videosTable, videoUpdateSchema } from "@/db/schema";
+import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { and, desc, eq, getTableColumns, lt, min, or } from "drizzle-orm";
 import { mux } from "@/lib/mux";
 import { title } from "process";
 import { TRPCError } from "@trpc/server";
@@ -11,6 +11,29 @@ import { workflow } from "@/lib/workflow";
 
 export const videosRouter = createTRPCRouter({
 
+
+
+    getOne: baseProcedure.input(z.object({
+        id: z.string().uuid()
+    })).query(async ({ input, ctx }) => {
+        const { id: videoId } = input;
+        const [existingVideo] = await db.select(
+            {
+                ...getTableColumns(videosTable),
+                user: {
+                    ...getTableColumns(usersTable)
+                }
+            }
+        ).from(videosTable).where(
+            eq(videosTable.id, videoId)
+        ).innerJoin(
+            usersTable, eq(videosTable.userId, usersTable.id)
+        )
+        if (!existingVideo)
+            throw new TRPCError({ code: 'NOT_FOUND' })
+        return existingVideo
+    })
+    ,
     generateTitle: protectedProcedure.input(z.object({
         id: z.string().uuid()
     })).mutation(async ({ ctx, input }) => {
