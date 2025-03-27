@@ -2,27 +2,41 @@ import { db } from "@/db";
 import { commentReactions, commentsTable, subscriptionsTable, usersTable } from "@/db/schema";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, count, desc, eq, getTableColumns, inArray, lt, or } from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns, inArray, isNotNull, isNull, lt, or } from "drizzle-orm";
 import { z } from "zod";
 
 export const commentsRouter = createTRPCRouter({
     create: protectedProcedure.input(z.object({
         videoId: z.string().uuid(),
+        parentId: z.string().uuid().nullish(),
         value: z.string().min(1).max(1000)
     })).mutation(async ({ ctx, input }) => {
-        const { videoId, value } = input;
+        const { videoId, value, parentId } = input;
         const { id: userId } = ctx.user
+
+        const [existingComment] = await db.select().from(commentsTable).where(
+            inArray(commentsTable.id, parentId ? [parentId] : [])
+        )
+        if (!existingComment && parentId) {
+            throw new TRPCError({ code: 'NOT_FOUND' })
+        }
+        if (existingComment && parentId && existingComment?.parentId) {
+            throw new TRPCError({ code: 'BAD_REQUEST' })
+        }
 
         const [newComment] = await db.insert(commentsTable).values({
             userId,
             videoId,
+            parentId,
             value
 
         }).returning()
         return newComment
     }),
     remove: protectedProcedure.input(z.object({
-        id: z.string().uuid()
+        id: z.string().uuid(),
+        parentId: z.string().uuid().nullish(),
+
     })).mutation(async ({ ctx, input }) => {
         const { id } = input;
         const { id: userId } = ctx.user
@@ -39,6 +53,7 @@ export const commentsRouter = createTRPCRouter({
     }),
     getMany: baseProcedure.input(z.object({
         videoId: z.string().uuid(),
+        parentId: z.string().uuid().nullish(),
         cursor: z.object(
             {
                 id: z.string().uuid(),
@@ -47,7 +62,7 @@ export const commentsRouter = createTRPCRouter({
         ).nullish(),
         limit: z.number().min(1).max(100)
     })).query(async ({ ctx, input }) => {
-        const { videoId, cursor, limit } = input;
+        const { videoId, cursor, limit, parentId } = input;
         const { clerkUserId } = ctx;
 
         let userId;
@@ -66,10 +81,17 @@ export const commentsRouter = createTRPCRouter({
             )
         )
 
+        const replies = db.$with('replies').as(
+            db.select({
+                parentId: commentsTable.parentId,
+                count: count(commentsTable.id).as('count')
+            }).from(commentsTable).where(isNotNull(commentsTable.parentId)).groupBy(commentsTable.parentId)
+        )
+
 
         const [comments, totalComments] = await Promise.all(
             [
-                db.with(userReaction).select(
+                db.with(userReaction, replies).select(
                     {
                         ...getTableColumns(commentsTable),
                         user: usersTable,
@@ -78,11 +100,15 @@ export const commentsRouter = createTRPCRouter({
                             and(eq(commentReactions.type, 'like'), eq(commentsTable.id, commentReactions.commentId))
                         ), dislikeCount: db.$count(commentReactions,
                             and(eq(commentReactions.type, 'dislike'), eq(commentsTable.id, commentReactions.commentId))
-                        )
+                        ),
+                        replyCount: replies.count,
                     }
                 ).from(commentsTable).where(
                     and(
                         eq(commentsTable.videoId, videoId),
+                        parentId ?
+                            eq(commentsTable.parentId, parentId) :
+                            isNull(commentsTable.parentId),
                         cursor ? or(
                             lt(commentsTable.updatedAt, cursor.updatedAt),
                             and(
@@ -94,6 +120,7 @@ export const commentsRouter = createTRPCRouter({
 
                 ).innerJoin(usersTable, eq(usersTable.id, commentsTable.userId))
                     .leftJoin(userReaction, eq(userReaction.commentId, commentsTable.id,))
+                    .leftJoin(replies, eq(commentsTable.id, replies.parentId,))
                     .orderBy(desc(commentsTable.updatedAt), desc(commentsTable.id))
                     .limit(limit + 1),
                 db.select(
@@ -101,7 +128,12 @@ export const commentsRouter = createTRPCRouter({
                         count: count()
                     }
                 ).from(commentsTable).where(
-                    eq(commentsTable.videoId, videoId)
+                    and(
+
+                        eq(commentsTable.videoId, videoId),
+
+                        isNull(commentsTable.parentId),
+                    )
                 )
 
             ]

@@ -20,9 +20,19 @@ import { z } from "zod";
 interface CommentFormProps {
   videoId: string;
   onSuccess?: () => void;
+  variant?: "comment" | "reply";
+
+  parentId?: string;
+  onCancel?: () => void;
 }
 
-const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
+const CommentForm = ({
+  videoId,
+  onSuccess,
+  variant = "comment",
+  onCancel,
+  parentId,
+}: CommentFormProps) => {
   const { user } = useUser();
   const clerk = useClerk();
   const utils = trpc.useUtils();
@@ -46,15 +56,18 @@ const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
       })
     ),
     defaultValues: {
+      parentId,
       videoId,
       value: "",
     },
   });
 
   const handleSubmit = (values: commentInsertType) => {
-    console.log("CALLED");
-    console.log(values);
     create.mutate(values);
+  };
+  const handleCancel = () => {
+    form.reset();
+    onCancel?.();
   };
   return (
     <Form {...form}>
@@ -76,7 +89,11 @@ const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
                 <FormControl>
                   <Textarea
                     {...field}
-                    placeholder="Add a comment"
+                    placeholder={
+                      variant == "comment"
+                        ? "Add a comment..."
+                        : "Reply to this comment..."
+                    }
                     className="resize-none bg-transparent overflow-hidden"
                   />
                 </FormControl>
@@ -86,13 +103,25 @@ const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
           />
 
           <div className="flex justify-end gap-2 mt-2 ">
+            {onCancel && (
+              <Button
+                type="button"
+                variant={"ghost"}
+                onClick={() => {
+                  handleCancel();
+                }}
+                className=""
+              >
+                Cancel
+              </Button>
+            )}
             <Button
               type="submit"
               size={"sm"}
               disabled={create.isPending}
               // onClick={() => create.mutate({ videoId, value: "Testing" })}
             >
-              Comment
+              {variant == "comment" ? "Comment" : "Reply"}
             </Button>
           </div>
         </div>
