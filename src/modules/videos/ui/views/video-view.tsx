@@ -14,12 +14,12 @@ const VideoView = ({ videoId }: VideoViewProps) => {
         <div className="min-w-0 flex-1">
           <VideoSection videoId={videoId} />
           <div className="xl:hidden mt-4 block">
-            <SuggestionsSection />
+            <SuggestionsSection videoId={videoId} isManual />
           </div>
           <CommentsSection videoId={videoId} />
         </div>
         <div className="hidden  w-full xl:w-[380px] 2xl:w-[460px] shrink xl:flex">
-          <SuggestionsSection />
+          <SuggestionsSection videoId={videoId} />
         </div>
       </div>
     </div>

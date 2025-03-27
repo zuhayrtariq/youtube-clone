@@ -1,4 +1,4 @@
-import { DEFAULT_COMMENTS_LIMIT } from "@/constants";
+import { DEFAULT_COMMENTS_LIMIT, DEFAULT_LIMIT } from "@/constants";
 import VideoView from "@/modules/videos/ui/views/video-view";
 import { HydrateClient, trpc } from "@/trpc/server";
 import React from "react";
@@ -16,6 +16,11 @@ const VideoPage = async ({ params }: VideoPageProps) => {
   void trpc.comments.getMany.prefetchInfinite({
     videoId: videoId,
     limit: DEFAULT_COMMENTS_LIMIT,
+  });
+
+  void trpc.suggestions.getMany.prefetchInfinite({
+    videoId,
+    limit: DEFAULT_LIMIT,
   });
   return (
     <HydrateClient>
