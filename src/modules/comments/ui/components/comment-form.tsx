@@ -38,7 +38,8 @@ const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
       else toast.message(e.message);
     },
   });
-  const form = useForm<z.infer<typeof commentInsertSchema>>({
+  type commentInsertType = Omit<z.infer<typeof commentInsertSchema>, "userId">;
+  const form = useForm<commentInsertType>({
     resolver: zodResolver(
       commentInsertSchema.omit({
         userId: true,
@@ -50,7 +51,7 @@ const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof commentInsertSchema>) => {
+  const handleSubmit = (values: commentInsertType) => {
     console.log("CALLED");
     console.log(values);
     create.mutate(values);
