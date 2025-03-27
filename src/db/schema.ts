@@ -104,13 +104,13 @@ export const videoReactions = pgTable('video_reactions', {
 ])
 
 export const videoViewRelations = relations(videoViews, ({ one, many }) => ({
-    users: one(
+    user: one(
         usersTable
         , {
             fields: [videoViews.userId],
             references: [usersTable.id]
         }),
-    videos: one(
+    video: one(
         videosTable
         , {
             fields: [videoViews.videoId],
@@ -122,13 +122,13 @@ export const videoViewInsertSchema = createInsertSchema(videoViews)
 export const videoViewUpdateSchema = createUpdateSchema(videoViews)
 export const videoViewSelectSchema = createSelectSchema(videoViews)
 export const videoReactionRelations = relations(videoReactions, ({ one, many }) => ({
-    users: one(
+    user: one(
         usersTable
         , {
             fields: [videoReactions.userId],
             references: [usersTable.id]
         }),
-    videos: one(
+    video: one(
         videosTable
         , {
             fields: [videoReactions.videoId],
@@ -153,7 +153,8 @@ export const userRelations = relations(usersTable, ({ many }) => ({
     subscriptions: many(subscriptionsTable, {
         relationName: 'subscriptions_viewer_id_fk'
     }),
-    comments: many(commentsTable)
+    comments: many(commentsTable),
+    commentReactions: many(commentReactions)
 }))
 
 
@@ -211,8 +212,45 @@ export const commentsRelations = relations(commentsTable, ({ one, many }) => ({
         fields: [commentsTable.videoId],
         references: [videosTable.id]
     }),
+    reactions: many(commentReactions)
 }))
 
 export const commentInsertSchema = createInsertSchema(commentsTable)
 export const commentUpdateSchema = createUpdateSchema(commentsTable)
 export const commentSelectSchema = createSelectSchema(commentsTable)
+
+
+export const commentReactions = pgTable('comment_reactions', {
+    userId: uuid('user_id').references(() => usersTable.id, { onDelete: 'cascade' }).notNull(),
+    commentId: uuid('comment_id').references(() => commentsTable.id, { onDelete: 'cascade' }).notNull(),
+    type: reactionType('type').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+
+}, (t) => [
+    primaryKey({
+        name: "comment_reactions_pk",
+        columns: [t.userId, t.commentId]
+    })
+])
+
+export const commentReactionRelations = relations(commentReactions, ({ one, many }) => ({
+    user: one(
+        usersTable
+        , {
+            fields: [commentReactions.userId],
+            references: [usersTable.id]
+        }),
+    comment: one(
+        commentsTable
+        , {
+            fields: [commentReactions.commentId],
+            references: [commentsTable.id]
+        }),
+
+}))
+
+
+export const commentReactionInsertSchema = createInsertSchema(commentReactions)
+export const commentReactionUpdateSchema = createUpdateSchema(commentReactions)
+export const commentReactionSelectSchema = createSelectSchema(commentReactions)

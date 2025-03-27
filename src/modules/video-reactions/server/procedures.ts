@@ -10,7 +10,6 @@ export const videoReactionsRouter = createTRPCRouter(
         })).mutation(async ({ input, ctx }) => {
             const { videoId } = input;
             const { id: userId } = ctx.user;
-            console.log("Called", userId)
             const [existingReaction] = await db.select().from(videoReactions).where(
                 and(
                     eq(videoReactions.videoId, videoId),

@@ -11,9 +11,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, MoreVerticalIcon, Trash2Icon } from "lucide-react";
+import {
+  MessageSquare,
+  MoreVerticalIcon,
+  ThumbsDownIcon,
+  ThumbsUpIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { useAuth, useClerk } from "@clerk/nextjs";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 interface CommentItemProps {
   comment: CommentsGetManyOutput["items"][number];
 }
@@ -33,6 +40,34 @@ const CommentItem = ({ comment }: CommentItemProps) => {
       toast.error(e.message);
     },
   });
+
+  const likeComment = trpc.commentReactions.likeReaction.useMutation({
+    onSuccess: () => {
+      toast.success("Comment Liked");
+      utils.comments.getMany.invalidate({
+        videoId: comment.videoId,
+      });
+    },
+
+    onError: (e) => {
+      if (e.data?.code == "UNAUTHORIZED") clerk.openSignIn();
+      else toast.error(e.message);
+    },
+  });
+  const dislikeComment = trpc.commentReactions.dislikeReaction.useMutation({
+    onSuccess: () => {
+      toast.success("Comment Disliked");
+      utils.comments.getMany.invalidate({
+        videoId: comment.videoId,
+      });
+    },
+
+    onError: (e) => {
+      if (e.data?.code == "UNAUTHORIZED") clerk.openSignIn();
+      else toast.error(e.message);
+    },
+  });
+
   return (
     <div>
       <div className="flex gap-3  ">
@@ -60,7 +95,51 @@ const CommentItem = ({ comment }: CommentItemProps) => {
           <div className="flex items-center w-full justify-between">
             <div className="">
               <p className="text-sm">{comment.value}</p>
-              {/* Comment Reactions */}
+
+              <div className="flex items-center gap-2 mt-1">
+                <div className="flex items-center ">
+                  <Button
+                    variant={"ghost"}
+                    className="size-8"
+                    size={"icon"}
+                    disabled={likeComment.isPending || dislikeComment.isPending}
+                    onClick={() => {
+                      likeComment.mutate({
+                        commentId: comment.id,
+                      });
+                    }}
+                  >
+                    <ThumbsUpIcon
+                      className={cn(
+                        comment.userReaction == "like" && "fill-black"
+                      )}
+                    />
+                  </Button>
+                  <span className="text-xs text-muted-foreground">
+                    {comment.likeCount}
+                  </span>
+                  <Button
+                    variant={"ghost"}
+                    className="size-8"
+                    size={"icon"}
+                    disabled={likeComment.isPending || dislikeComment.isPending}
+                    onClick={() => {
+                      dislikeComment.mutate({
+                        commentId: comment.id,
+                      });
+                    }}
+                  >
+                    <ThumbsDownIcon
+                      className={cn(
+                        comment.userReaction == "dislike" && "fill-black"
+                      )}
+                    />
+                  </Button>
+                  <span className="text-xs text-muted-foreground">
+                    {comment.dislikeCount}
+                  </span>
+                </div>
+              </div>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
