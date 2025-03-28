@@ -1,17 +1,18 @@
 import { DEFAULT_LIMIT } from "@/constants";
-import StudioView from "@/modules/studio/ui/view/studio-view";
+import SubscriptionView from "@/modules/home/ui/views/subscription-view";
 import { HydrateClient, trpc } from "@/trpc/server";
 import React from "react";
 export const dynamic = "force-dynamic";
-const StudioPage = async () => {
-  void trpc.studio.getMany.prefetchInfinite({
+
+const SubscriptionsPage = async () => {
+  void trpc.videos.getManySubscriptions.prefetchInfinite({
     limit: DEFAULT_LIMIT,
   });
   return (
     <HydrateClient>
-      <StudioView />
+      <SubscriptionView />
     </HydrateClient>
   );
 };
 
-export default StudioPage;
+export default SubscriptionsPage;

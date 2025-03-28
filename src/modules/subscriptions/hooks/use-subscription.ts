@@ -16,6 +16,7 @@ export const useSubscription = ({ userId, isSubscribed, fromVideoId }: UseSubscr
     const subscribe = trpc.subscriptions.create.useMutation({
         onSuccess: () => {
             toast.success("User subscribed!")
+            utils.videos.getManySubscriptions.invalidate()
             if (fromVideoId) {
                 utils.videos.getOne.invalidate({ id: fromVideoId })
             }
