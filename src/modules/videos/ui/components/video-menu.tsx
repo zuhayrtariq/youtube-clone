@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { APP_URL } from "@/constants";
 import { ListPlus, MoreVerticalIcon, ShareIcon, TrashIcon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
@@ -21,9 +22,7 @@ const VideoMenu = ({
   variant = "ghost",
 }: VideoMenuProps) => {
   const onShare = () => {
-    const fullUrl = `${
-      process.env.VERCEL_URL || "http://localhost:3000"
-    }/videos/${videoId}`;
+    const fullUrl = `${APP_URL || "http://localhost:3000"}/videos/${videoId}`;
     navigator.clipboard.writeText(fullUrl);
     toast.success("Link copied");
   };

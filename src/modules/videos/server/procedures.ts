@@ -12,6 +12,55 @@ export const videosRouter = createTRPCRouter({
 
 
 
+    revalidate: protectedProcedure.input(z.object({
+        id: z.string().uuid()
+    })
+    ).mutation(async ({ input, ctx }) => {
+        const { id: videoId } = input;
+        const { id: userId } = ctx.user;
+
+        const [existingVideo] = await db.select().from(videosTable).where(
+            and(
+                eq(videosTable.userId, userId),
+                eq(videosTable.id, videoId),
+            )
+        )
+        if (!existingVideo)
+            throw new TRPCError({ code: 'NOT_FOUND' })
+
+        const { muxUploadId } = existingVideo
+        if (!muxUploadId)
+            throw new TRPCError({ code: 'BAD_REQUEST' })
+        const directUpload = await mux.video.uploads.retrieve(muxUploadId);
+        const { asset_id } = directUpload
+        if (!asset_id)
+            throw new TRPCError({ code: 'BAD_REQUEST' })
+
+        const asset = await mux.video.assets.retrieve(asset_id)
+        if (!asset)
+            throw new TRPCError({ code: 'BAD_REQUEST' })
+
+        const { duration, id: assetId, playback_ids, status } = asset
+        const playbackId = playback_ids?.[0].id;
+
+        const durationInt = duration ? Math.round(duration * 1000) : 0
+
+        const updatedVideo = await db.update(videosTable).set({
+            muxStatus: status,
+            muxPlaybackId: playbackId,
+            duration: durationInt,
+            muxAssetId: assetId,
+        }).where(
+            and(
+                eq(videosTable.userId, userId),
+                eq(videosTable.id, videoId),
+
+            )
+        ).returning();
+        return updatedVideo
+
+    }),
+
     getOne: baseProcedure.input(z.object({
         id: z.string().uuid()
     })).query(async ({ input, ctx }) => {

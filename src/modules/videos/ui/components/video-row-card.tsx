@@ -70,7 +70,11 @@ const VideoRowCard = ({ data, size, onRemove }: VideoRowCardProps) => {
   }, []);
   return (
     <div className={videoRowCardVariants({ size })}>
-      <Link href={`/videos/${videoId}`} className={thumbnailVariants({ size })}>
+      <Link
+        href={`/videos/${videoId}`}
+        className=" w-[40%] min-w-[50px] h-full"
+      >
+        {/* className={thumbnailVariants({ size })} */}
         <VideoThumbnail
           duration={duration}
           previewUrl={previewUrl}

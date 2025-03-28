@@ -50,6 +50,7 @@ import Image from "next/image";
 import ThumbnailUploadModal from "../components/thumbnail-upload-modal";
 import ThumbnailGenerateModal from "../components/thumbnail-generate.modal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { APP_URL } from "@/constants";
 
 interface VideoFormProps {
   videoId: string;
@@ -140,6 +141,15 @@ const VideoFormSuspense = ({ videoId }: VideoFormProps) => {
       toast.error("Unable to delete :" + e.message);
     },
   });
+  const revalidate = trpc.videos.revalidate.useMutation({
+    onSuccess: () => {
+      toast.success("Video revalidated successfully");
+      utils.studio.getOne.invalidate({ id: videoId });
+    },
+    onError: (e) => {
+      toast.error("Unable to revalidated :" + e.message);
+    },
+  });
 
   const generateTitle = trpc.videos.generateTitle.useMutation({
     onSuccess: () => {
@@ -194,9 +204,7 @@ const VideoFormSuspense = ({ videoId }: VideoFormProps) => {
       setIsCopied(false);
     }, 2000);
   };
-  const fullUrl = `${
-    process.env.VERCEL_URL || "http://localhost:3000"
-  }/videos/${videoId}`;
+  const fullUrl = `${APP_URL}/videos/${videoId}`;
   return (
     <div className="mb-6">
       <ThumbnailUploadModal
@@ -238,6 +246,14 @@ const VideoFormSuspense = ({ videoId }: VideoFormProps) => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      revalidate.mutate({ id: videoId });
+                    }}
+                  >
+                    <RotateCcw className="mr-2 size-4" />
+                    Revalidate
+                  </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
                       remove.mutate({ id: videoId });

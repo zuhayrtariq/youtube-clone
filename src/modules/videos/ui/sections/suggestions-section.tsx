@@ -1,17 +1,28 @@
 "use client";
 import { DEFAULT_LIMIT } from "@/constants";
 import { trpc } from "@/trpc/client";
-import React from "react";
+import React, { Suspense } from "react";
 import VideoRowCard from "../components/video-row-card";
 import VideoGridCard from "../components/video-grid-card";
 import InfiniteScroll from "@/components/infinite-scroll";
+import { ErrorBoundary } from "react-error-boundary";
 
 interface SuggestionsSectionProps {
   videoId: string;
   isManual?: boolean;
 }
 
-const SuggestionsSection = ({
+const SuggestionsSection = ({ videoId, isManual }: SuggestionsSectionProps) => {
+  return (
+    <Suspense fallback={"Loading..."}>
+      <ErrorBoundary fallback={"Error..."}>
+        <SuggestionsSectionSuspense videoId={videoId} isManual={isManual} />
+      </ErrorBoundary>
+    </Suspense>
+  );
+};
+
+const SuggestionsSectionSuspense = ({
   videoId,
   isManual = false,
 }: SuggestionsSectionProps) => {
@@ -26,7 +37,7 @@ const SuggestionsSection = ({
       }
     );
   return (
-    <>
+    <div>
       <div className="hidden md:block space-y-3">
         {suggestions.pages
           .flatMap((page) => page.items)
@@ -47,7 +58,7 @@ const SuggestionsSection = ({
         isFetchingNextPage={query.isFetchingNextPage}
         hasNextPage={query.hasNextPage}
       />
-    </>
+    </div>
   );
 };
 
