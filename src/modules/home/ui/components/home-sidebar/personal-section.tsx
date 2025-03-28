@@ -18,6 +18,7 @@ import {
   ThumbsUpIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const items = [
   {
@@ -28,7 +29,7 @@ const items = [
   },
   {
     title: "Liked Videos",
-    url: "/playlists/likes",
+    url: "/playlists/liked",
     icon: <ThumbsUpIcon />,
     auth: true,
   },
@@ -41,6 +42,7 @@ const items = [
 ];
 
 const PersonalSection = () => {
+  const pathName = usePathname();
   const { isSignedIn } = useAuth();
   const clerk = useClerk();
   return (
@@ -53,7 +55,7 @@ const PersonalSection = () => {
               <SidebarMenuButton
                 tooltip={item.title}
                 asChild
-                isActive={false}
+                isActive={pathName == item.url}
                 onClick={(e) => {
                   if (!isSignedIn && item.auth) {
                     e.preventDefault();

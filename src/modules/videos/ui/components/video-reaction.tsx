@@ -27,6 +27,7 @@ const VideoReactions = ({
     onSuccess: () => {
       toast.success("Reaction Updated");
       utils.videos.getOne.invalidate({ id: videoId });
+      utils.playlists.getLiked.invalidate();
     },
     onError: (e) => {
       if (e.data?.code == "UNAUTHORIZED") {
@@ -38,6 +39,7 @@ const VideoReactions = ({
     onSuccess: () => {
       toast.success("Reaction Updated");
       utils.videos.getOne.invalidate({ id: videoId });
+      utils.playlists.getLiked.invalidate();
     },
     onError: (e) => {
       if (e.data?.code == "UNAUTHORIZED") {
