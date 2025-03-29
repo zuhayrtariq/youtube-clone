@@ -33,12 +33,12 @@ const items = [
     icon: <ThumbsUpIcon />,
     auth: true,
   },
-  {
-    title: "All Playlists",
-    url: "/playlists",
-    icon: <ListVideoIcon />,
-    auth: true,
-  },
+  // {
+  //   title: "All Playlists",
+  //   url: "/playlists",
+  //   icon: <ListVideoIcon />,
+  //   auth: true,
+  // },
 ];
 
 const PersonalSection = () => {

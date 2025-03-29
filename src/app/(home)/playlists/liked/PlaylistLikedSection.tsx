@@ -39,7 +39,7 @@ const PlaylistLikedSectionSuspense = () => {
         {videos.pages
           .flatMap((page) => page.items)
           .map((video) => (
-            <VideoRowCard data={video} key={video.id} size={"compact"} />
+            <VideoRowCard data={video} key={video.id} size={"default"} />
           ))}
       </div>
       <InfiniteScroll

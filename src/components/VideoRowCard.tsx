@@ -70,10 +70,7 @@ const VideoRowCard = ({ data, size, onRemove }: VideoRowCardProps) => {
   }, []);
   return (
     <div className={videoRowCardVariants({ size })}>
-      <Link
-        href={`/videos/${videoId}`}
-        className=" w-[40%] min-w-[50px] h-full"
-      >
+      <Link href={`/videos/${videoId}`} className={thumbnailVariants({ size })}>
         {/* className={thumbnailVariants({ size })} */}
         <VideoThumbnail
           duration={duration}
@@ -85,7 +82,7 @@ const VideoRowCard = ({ data, size, onRemove }: VideoRowCardProps) => {
 
       {/* Info */}
 
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 ">
         <div className="flex justify-between gap-x-2">
           <Link href={`/videos/${videoId}`} className="flex-1 min-w-0">
             <h3

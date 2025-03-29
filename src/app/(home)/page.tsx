@@ -16,6 +16,7 @@ const HomePage = async ({ searchParams }: PageProps) => {
     categoryId,
     limit: DEFAULT_LIMIT,
   });
+
   return (
     <HydrateClient>
       <HomeView categoryId={categoryId} />

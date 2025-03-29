@@ -26,11 +26,11 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
   const [video] = trpc.videos.getOne.useSuspenseQuery({
     id: videoId,
   });
-  // const createView = trpc.videoViews.create.useMutation({
-  //   onSuccess: () => {
-  //     utils.videos.getOne.invalidate({ id: videoId });
-  //   },
-  // });
+  const createUserView = trpc.videoViews.create.useMutation({
+    onSuccess: () => {
+      utils.videos.getOne.invalidate({ id: videoId });
+    },
+  });
 
   const createView = trpc.videos.addView.useMutation({
     onSuccess: () => {
@@ -40,7 +40,10 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
   const handlePlay = () => {
     if (!isSignedIn) return;
     createView.mutate({
-      id: videoId,
+      videoId,
+    });
+    createUserView.mutate({
+      videoId,
     });
   };
   return (

@@ -116,7 +116,7 @@ const VideoFormSuspense = ({ videoId }: VideoFormProps) => {
   const [generateThumbnailOpenModal, setGenerateThumbnailOpenModal] =
     useState(false);
   const router = useRouter();
-  const [video] = trpc.studio.getOne.useSuspenseQuery({ id: videoId });
+  const [video] = trpc.studio.getOne.useSuspenseQuery({ videoId });
   const [categories] = trpc.categories.getMany.useSuspenseQuery();
   const utils = trpc.useUtils();
   const update = trpc.videos.update.useMutation({
@@ -124,7 +124,7 @@ const VideoFormSuspense = ({ videoId }: VideoFormProps) => {
       toast.success("Video updated successfully");
       utils.studio.getMany.invalidate();
       utils.studio.getOne.invalidate({
-        id: videoId,
+        videoId,
       });
     },
     onError: (e) => {
@@ -144,7 +144,7 @@ const VideoFormSuspense = ({ videoId }: VideoFormProps) => {
   const revalidate = trpc.videos.revalidate.useMutation({
     onSuccess: () => {
       toast.success("Video revalidated successfully");
-      utils.studio.getOne.invalidate({ id: videoId });
+      utils.studio.getOne.invalidate({ videoId });
     },
     onError: (e) => {
       toast.error("Unable to revalidated :" + e.message);
@@ -180,7 +180,7 @@ const VideoFormSuspense = ({ videoId }: VideoFormProps) => {
   const restoreThumbnail = trpc.videos.restoreThumbnail.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate();
-      utils.studio.getOne.invalidate({ id: videoId });
+      utils.studio.getOne.invalidate({ videoId });
       toast.success("Video thumbnail restored successfully");
     },
     onError: (e) => {

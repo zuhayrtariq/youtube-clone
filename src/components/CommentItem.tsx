@@ -49,22 +49,9 @@ const CommentItem = ({ comment, variant = "comment" }: CommentItemProps) => {
     },
   });
 
-  const likeComment = trpc.commentReactions.likeReaction.useMutation({
+  const commentReaction = trpc.commentReactions.recordReaction.useMutation({
     onSuccess: () => {
-      toast.success("Comment Liked");
-      utils.comments.getMany.invalidate({
-        videoId: comment.videoId,
-      });
-    },
-
-    onError: (e) => {
-      if (e.data?.code == "UNAUTHORIZED") clerk.openSignIn();
-      else toast.error(e.message);
-    },
-  });
-  const dislikeComment = trpc.commentReactions.dislikeReaction.useMutation({
-    onSuccess: () => {
-      toast.success("Comment Disliked");
+      // toast.success("Reaction recorded");
       utils.comments.getMany.invalidate({
         videoId: comment.videoId,
       });
@@ -110,10 +97,11 @@ const CommentItem = ({ comment, variant = "comment" }: CommentItemProps) => {
                     variant={"ghost"}
                     className="size-8"
                     size={"icon"}
-                    disabled={likeComment.isPending || dislikeComment.isPending}
+                    disabled={commentReaction.isPending}
                     onClick={() => {
-                      likeComment.mutate({
+                      commentReaction.mutate({
                         commentId: comment.id,
+                        reactionType: "like",
                       });
                     }}
                   >
@@ -130,10 +118,11 @@ const CommentItem = ({ comment, variant = "comment" }: CommentItemProps) => {
                     variant={"ghost"}
                     className="size-8"
                     size={"icon"}
-                    disabled={likeComment.isPending || dislikeComment.isPending}
+                    disabled={commentReaction.isPending}
                     onClick={() => {
-                      dislikeComment.mutate({
+                      commentReaction.mutate({
                         commentId: comment.id,
+                        reactionType: "dislike",
                       });
                     }}
                   >

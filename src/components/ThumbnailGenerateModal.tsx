@@ -58,7 +58,7 @@ const ThumbnailGenerateModal = ({
       prompt: values.prompt,
     });
     utils.studio.getMany.invalidate();
-    utils.studio.getOne.invalidate({ id: videoId });
+    utils.studio.getOne.invalidate({ videoId });
     onOpenChange(false);
   };
   return (

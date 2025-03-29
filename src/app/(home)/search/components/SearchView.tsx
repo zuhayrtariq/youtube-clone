@@ -1,6 +1,6 @@
 import React from "react";
-import CategoriesSection from "../sections/categories-section";
-import ResultsSection from "./results-section";
+import CategoriesSection from "./CategoriesSection";
+import ResultsSection from "./ResultsSection";
 
 interface SearchViewProps {
   query: string;
@@ -9,7 +9,7 @@ interface SearchViewProps {
 
 const SearchView = ({ query, categoryId }: SearchViewProps) => {
   return (
-    <div className="max-w-[1300px] mx-auto mb-10 flex flex-col gap-y-6 px-4 pt-2.5">
+    <div className="w-full max-w-[1300px] mx-auto mb-10 flex flex-col gap-y-6 px-4 pt-2.5">
       <CategoriesSection categoryId={categoryId} />
       <ResultsSection query={query} categoryId={categoryId} />
     </div>

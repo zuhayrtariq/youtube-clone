@@ -23,9 +23,9 @@ const VideoReactions = ({
 }: VideoReactionProps) => {
   const utils = trpc.useUtils();
   const clerk = useClerk();
-  const likeReaction = trpc.videoReaction.likeReaction.useMutation({
+  const recordReaction = trpc.videoReaction.recordReaction.useMutation({
     onSuccess: () => {
-      toast.success("Reaction Updated");
+      // toast.success("Reaction recorded");
       utils.videos.getOne.invalidate({ id: videoId });
       utils.playlists.getLiked.invalidate();
     },
@@ -35,37 +35,19 @@ const VideoReactions = ({
       } else toast.error("Can not react to video");
     },
   });
-  const dislikeReaction = trpc.videoReaction.dislikeReaction.useMutation({
-    onSuccess: () => {
-      toast.success("Reaction Updated");
-      utils.videos.getOne.invalidate({ id: videoId });
-      utils.playlists.getLiked.invalidate();
-    },
-    onError: (e) => {
-      if (e.data?.code == "UNAUTHORIZED") {
-        clerk.openSignIn();
-      } else toast.error("Can not react to video");
-    },
-  });
-
-  const handleLikeReaction = async () => {
-    likeReaction.mutate({
-      videoId,
-    });
-  };
-  const handleDislikeReaction = async () => {
-    dislikeReaction.mutate({
-      videoId,
-    });
-  };
 
   return (
     <div className="flex items-center flex-none">
       <Button
         className="rounded-l-full rounded-r-none gap-2 pr-4"
         variant={"secondary"}
-        disabled={likeReaction.isPending || dislikeReaction.isPending}
-        onClick={() => handleLikeReaction()}
+        disabled={recordReaction.isPending}
+        onClick={() =>
+          recordReaction.mutate({
+            reactionType: "like",
+            videoId,
+          })
+        }
       >
         <ThumbsUpIcon
           className={cn("size-5", userReaction == "like" && "fill-black")}
@@ -76,8 +58,13 @@ const VideoReactions = ({
       <Button
         className="rounded-l-none rounded-r-full  pl-3"
         variant={"secondary"}
-        disabled={likeReaction.isPending || dislikeReaction.isPending}
-        onClick={() => handleDislikeReaction()}
+        disabled={recordReaction.isPending}
+        onClick={() =>
+          recordReaction.mutate({
+            reactionType: "dislike",
+            videoId,
+          })
+        }
       >
         <ThumbsDownIcon
           className={cn("size-5", userReaction == "dislike" && "fill-black")}

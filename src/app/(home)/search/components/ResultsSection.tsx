@@ -1,9 +1,9 @@
 "use client";
-import InfiniteScroll from "@/components/infinite-scroll";
+import InfiniteScroll from "@/components/InfiniteScroll";
+import VideoGridCard from "@/components/VideoGridCard";
+import VideoRowCard from "@/components/VideoRowCard";
 import { DEFAULT_LIMIT } from "@/constants";
 import { useIsMobile } from "@/hooks/use-mobile";
-import VideoGridCard from "@/modules/videos/ui/components/video-grid-card";
-import VideoRowCard from "@/modules/videos/ui/components/video-row-card";
 import { trpc } from "@/trpc/client";
 import React, { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";

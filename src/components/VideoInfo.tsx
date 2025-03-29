@@ -28,7 +28,7 @@ const VideoInfo = ({ data, onRemove }: VideoInfoProps) => {
       </Link>
       <div className="flex-1 min-w-0">
         <Link href={`videos/${videoId}`}>
-          <h3 className="font-medium line-clamp-1 lg:line-clamp-2 text-base break-words">
+          <h3 className="font-medium line-clamp-1 lg:line-clamp-2 text-base  break-words">
             {title}
           </h3>
         </Link>
