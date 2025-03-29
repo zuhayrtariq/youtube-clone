@@ -1,7 +1,7 @@
 import { DEFAULT_LIMIT } from "@/constants";
-import PlaylistHistoryView from "@/modules/playlists/ui/views/history-view";
 import { HydrateClient, trpc } from "@/trpc/server";
 import React from "react";
+import PlaylistHistoryView from "./HistoryView";
 
 const PlaylistHistoryPage = () => {
   void trpc.playlists.getHistory.prefetchInfinite({

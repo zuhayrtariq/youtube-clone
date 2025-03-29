@@ -1,7 +1,7 @@
 import { DEFAULT_COMMENTS_LIMIT, DEFAULT_LIMIT } from "@/constants";
-import VideoView from "@/modules/videos/ui/views/video-view";
 import { HydrateClient, trpc } from "@/trpc/server";
 import React from "react";
+import VideoView from "../components/VideoView";
 export const dynamic = "force-dynamic";
 interface VideoPageProps {
   params: Promise<{

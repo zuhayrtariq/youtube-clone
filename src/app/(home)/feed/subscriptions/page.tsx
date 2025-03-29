@@ -1,7 +1,7 @@
 import { DEFAULT_LIMIT } from "@/constants";
-import SubscriptionView from "@/modules/home/ui/views/subscription-view";
 import { HydrateClient, trpc } from "@/trpc/server";
 import React from "react";
+import SubscriptionView from "../../components/SubscriptionView";
 export const dynamic = "force-dynamic";
 
 const SubscriptionsPage = async () => {

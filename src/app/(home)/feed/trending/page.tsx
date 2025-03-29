@@ -1,7 +1,7 @@
 import { DEFAULT_LIMIT } from "@/constants";
-import TrendingView from "@/modules/home/ui/views/trending-view";
 import { HydrateClient, trpc } from "@/trpc/server";
 import React from "react";
+import TrendingView from "../../components/TrendingView";
 export const dynamic = "force-dynamic";
 
 const TrendingPage = async () => {

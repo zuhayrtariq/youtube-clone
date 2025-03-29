@@ -1,5 +1,5 @@
-import StudioLayout from "@/modules/studio/layouts/studio-layout";
 import React, { ReactNode } from "react";
+import StudioLayout from "./components/StudioLayout";
 
 interface LayoutProps {
   children: ReactNode;

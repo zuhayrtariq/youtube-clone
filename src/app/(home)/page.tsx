@@ -1,7 +1,7 @@
 import { DEFAULT_LIMIT } from "@/constants";
-import HomeView from "@/modules/home/ui/views/home-view";
 import { HydrateClient, trpc } from "@/trpc/server";
 import React from "react";
+import HomeView from "./components/HomeView";
 export const dynamic = "force-dynamic";
 
 interface PageProps {
