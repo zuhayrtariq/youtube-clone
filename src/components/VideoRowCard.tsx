@@ -99,7 +99,9 @@ const VideoRowCard = ({ data, size, onRemove }: VideoRowCardProps) => {
             </h3>
             {size == "default" && (
               <p className="text-xs text-muted-foreground mt-1">
-                {compactViews} views • {compactLikes} likes
+                {compactViews} {views > 1 || views == 0 ? "views" : "view"} •{" "}
+                {compactLikes}{" "}
+                {likeCount > 1 || likeCount == 0 ? "likes" : "like"}
               </p>
             )}
             {size == "default" && (
@@ -131,7 +133,9 @@ const VideoRowCard = ({ data, size, onRemove }: VideoRowCardProps) => {
             {size == "compact" && <UserInfo size={"sm"} name={user.name} />}
             {size == "compact" && (
               <p className="text-xs text-muted-foreground mt-1">
-                {compactViews} views • {compactLikes} likes
+                {compactViews} {views > 1 || views == 0 ? "views" : "view"} •{" "}
+                {compactLikes}{" "}
+                {likeCount > 1 || likeCount == 0 ? "likes" : "like"}
               </p>
             )}
           </Link>

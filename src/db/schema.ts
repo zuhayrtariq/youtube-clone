@@ -50,9 +50,7 @@ export const videosTable = pgTable("videos", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: text().notNull(),
   description: text().notNull(),
-  views: integer()
-    .default(Math.floor(Math.random() * 1000) + 10)
-    .notNull(),
+  views: integer().default(0).notNull(),
   muxStatus: text("mux_status"),
   muxAssetId: text("mux_asset_id").unique(),
   muxUploadId: text("mux_upload_id").unique(),

@@ -26,7 +26,8 @@ const VideoDescription = ({
     >
       <div className="flex gap-2 text-sm mb-2">
         <span className="font-medium">
-          {isExpanded ? expandedViews : compactViews} views
+          {isExpanded ? expandedViews : compactViews}{" "}
+          {Number(expandedViews) > 1 ? "views" : "view"}
         </span>
         <span className="font-medium">
           {isExpanded ? expandedDate : compactDate}

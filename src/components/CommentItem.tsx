@@ -66,7 +66,7 @@ const CommentItem = ({ comment, variant = "comment" }: CommentItemProps) => {
   return (
     <div>
       <div className="flex gap-3  ">
-        <Link prefetch href={"/users/" + comment.userId}>
+        <Link prefetch href={"/user/" + comment.userId}>
           <UserAvatar
             size={variant == "comment" ? "lg" : "sm"}
             imageUrl={comment.user.imageUrl}
@@ -76,7 +76,7 @@ const CommentItem = ({ comment, variant = "comment" }: CommentItemProps) => {
         <div className="flex flex-col  flex-1 min-w-0">
           <div className="flex items-center  gap-3 mb-0.5">
             <Link
-              href={"/users/" + comment.userId}
+              href={"/user/" + comment.userId}
               className="flex items-center "
             >
               <span className="font-medium text-sm pb-0.5">
