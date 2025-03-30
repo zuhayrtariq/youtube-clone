@@ -26,7 +26,7 @@ export default function RootLayout({
         <body className={`${inter.className}  antialiased`}>
           <TRPCProvider>
             {children}
-            <NextTopLoader />
+            <NextTopLoader showSpinner={false} />
             <Toaster />
           </TRPCProvider>
         </body>
