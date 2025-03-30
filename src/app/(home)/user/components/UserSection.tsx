@@ -26,7 +26,6 @@ const UserSectionSuspense = ({ userId }: UserSectionProps) => {
   });
   return (
     <div className="flex flex-col  ">
-      <UserSection userId={userId} />
       <UserPageInfo user={user} />
     </div>
   );

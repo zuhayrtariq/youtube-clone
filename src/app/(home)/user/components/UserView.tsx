@@ -8,7 +8,7 @@ interface UserViewProps {
 
 const UserView = ({ userId }: UserViewProps) => {
   return (
-    <div className="flex flex-col w-full max-w-[1300px] mx-auto mb-10 px-4 pt-2.5 gap-y-6 ">
+    <div className="flex flex-col w-full max-w-[1300px] mx-auto mb-10 px-4 pt-2.5 gap-y-6  ">
       <UserSection userId={userId} />
       <UserVideosSection userId={userId} />
     </div>

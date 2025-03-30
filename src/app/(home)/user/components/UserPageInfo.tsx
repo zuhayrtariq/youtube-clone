@@ -48,7 +48,7 @@ const UserPageInfo = ({ user }: UserPageInfo) => {
             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
               <span>
                 {subscriberCount}{" "}
-                {subscriberCount == 1 ? "subscriber" : "subscribers"} •
+                {subscriberCount == 1 ? "subscriber" : "subscribers"} •{" "}
                 {videoCount} {videoCount == 1 ? "video" : "videos"}
               </span>
             </div>
@@ -67,7 +67,7 @@ const UserPageInfo = ({ user }: UserPageInfo) => {
             isSubscribed={user.viewerSubscribed}
             className="w-full mt-3"
             onClick={onClick}
-            disabled={isPending || isLoaded}
+            disabled={isPending || !isLoaded}
           />
         )}
       </div>
@@ -95,7 +95,7 @@ const UserPageInfo = ({ user }: UserPageInfo) => {
           <div className="flex items-center gap-1 text-sm text-foreground mt-3">
             <span>
               {subscriberCount}{" "}
-              {subscriberCount == 1 ? "subscriber" : "subscribers"} •
+              {subscriberCount == 1 ? "subscriber" : "subscribers"} •{" "}
               {videoCount} {videoCount == 1 ? "video" : "videos"}
             </span>
           </div>
@@ -112,7 +112,7 @@ const UserPageInfo = ({ user }: UserPageInfo) => {
               isSubscribed={user.viewerSubscribed}
               className=" mt-3"
               onClick={onClick}
-              disabled={isPending || isLoaded}
+              disabled={isPending || !isLoaded}
             />
           )}
         </div>

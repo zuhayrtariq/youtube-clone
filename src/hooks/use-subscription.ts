@@ -35,6 +35,9 @@ export const useSubscription = ({
   const unsubscribe = trpc.subscriptions.remove.useMutation({
     onSuccess: () => {
       toast.success("User unsubscribed!");
+      utils.users.getOne.invalidate({
+        id: userId,
+      });
       if (fromVideoId) {
         utils.videos.getOne.invalidate({ id: fromVideoId });
       }
