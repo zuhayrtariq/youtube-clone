@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import { categoriesTable } from "@/db/schema";
-// const categoriesTable = require('../db/schema')
-// const db = require("../db")
+
 const categoryNames = [
   "Cars and vehicle",
   "Travel",
@@ -30,7 +29,7 @@ const main = async () => {
     await db.insert(categoriesTable).values(values);
     console.log("Categories Seeded.");
   } catch (e) {
-    console.log(<ErrorSkeleton />, e);
+    console.log("Error", e);
     process.exit(1);
   }
 };

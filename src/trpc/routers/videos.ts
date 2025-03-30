@@ -377,7 +377,7 @@ export const videosRouter = createTRPCRouter({
         videoId: z.string().uuid(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       const { videoId } = input;
       const { workflowRunId } = await workflow.trigger({
         url:

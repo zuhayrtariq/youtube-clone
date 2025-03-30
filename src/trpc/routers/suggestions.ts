@@ -1,17 +1,8 @@
 import { db } from "@/db";
 import { z } from "zod";
-import {
-  usersTable,
-  videoReactions,
-  videosTable,
-  videoViews,
-} from "@/db/schema";
-import {
-  baseProcedure,
-  createTRPCRouter,
-  protectedProcedure,
-} from "@/trpc/init";
-import { and, desc, eq, getTableColumns, lt, min, not, or } from "drizzle-orm";
+import { usersTable, videoReactions, videosTable } from "@/db/schema";
+import { baseProcedure, createTRPCRouter } from "@/trpc/init";
+import { and, desc, eq, getTableColumns, lt, not, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const suggestionsRouter = createTRPCRouter({

@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { z } from "zod";
 import { videosTable } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { and, desc, eq, lt, min, or } from "drizzle-orm";
+import { and, desc, eq, lt, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { paginate } from "@/hooks/use-paginate";
 

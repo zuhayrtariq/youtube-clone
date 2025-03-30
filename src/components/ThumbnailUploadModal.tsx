@@ -1,5 +1,5 @@
 "use client";
-import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
+import { UploadButton } from "@/lib/uploadthing";
 import { trpc } from "@/trpc/client";
 import React from "react";
 import ResponsiveModal from "./ResponsiveModal";
