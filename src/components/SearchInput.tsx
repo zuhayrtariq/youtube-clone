@@ -30,7 +30,7 @@ const SearchInput = () => {
           onChange={(e) => setValue(e.target.value)}
           type="text"
           placeholder="Search"
-          className="w-full pl-4 py-2.5 pr-12 rounded-l-full  border focus:outline-none focus:border-blue-500 "
+          className="w-full pl-4 py-2 text-sm pr-12 rounded-l-full  border focus:outline-none focus:border-blue-500 "
         />
         {value && (
           <Button
@@ -50,7 +50,7 @@ const SearchInput = () => {
       </div>
       <button
         type="submit"
-        className="bg-gray-100 border-l-0 border px-5 py-2.5 rounded-r-full hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-gray-100 border-l-0 border px-5 py-2 rounded-r-full hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <SearchIcon className="size-5" />
       </button>

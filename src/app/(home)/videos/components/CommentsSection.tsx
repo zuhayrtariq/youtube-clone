@@ -1,4 +1,5 @@
 "use client";
+import ErrorSkeleton from "@/app/(studio)/components/ErrorSkeleton";
 import CommentForm from "@/components/CommentForm";
 import CommentItem from "@/components/CommentItem";
 import InfiniteScroll from "@/components/InfiniteScroll";
@@ -14,7 +15,7 @@ interface CommentsSectionProps {
 const CommentsSection = ({ videoId }: CommentsSectionProps) => {
   return (
     <Suspense fallback={<CommentsSectionSkeleton />}>
-      <ErrorBoundary fallback={"Error..."}>
+      <ErrorBoundary fallback={<ErrorSkeleton />}>
         <CommentsSectionSuspense videoId={videoId} />
       </ErrorBoundary>
     </Suspense>

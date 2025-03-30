@@ -17,11 +17,12 @@ import { Globe2Icon, LockIcon } from "lucide-react";
 import Link from "next/link";
 import React, { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import ErrorSkeleton from "./ErrorSkeleton";
 
 const VideosSection = () => {
   return (
     <Suspense fallback={<VideosSectionSkeleton />}>
-      <ErrorBoundary fallback={"Error..."}>
+      <ErrorBoundary fallback={<ErrorSkeleton />}>
         <VideosSectionSuspense />
       </ErrorBoundary>
     </Suspense>

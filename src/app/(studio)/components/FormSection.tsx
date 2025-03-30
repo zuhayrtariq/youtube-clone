@@ -51,6 +51,7 @@ import { APP_URL } from "@/constants";
 import ThumbnailUploadModal from "@/components/ThumbnailUploadModal";
 import ThumbnailGenerateModal from "@/components/ThumbnailGenerateModal";
 import VideoPlayer from "@/components/VideoPlayer";
+import ErrorSkeleton from "./ErrorSkeleton";
 
 interface VideoFormProps {
   videoId: string;
@@ -59,7 +60,7 @@ interface VideoFormProps {
 const VideoForm = ({ videoId }: VideoFormProps) => {
   return (
     <Suspense fallback={<VideoFormSkeleton />}>
-      <ErrorBoundary fallback="Error...">
+      <ErrorBoundary fallback={<ErrorSkeleton />}>
         <VideoFormSuspense videoId={videoId} />
       </ErrorBoundary>
     </Suspense>
@@ -439,7 +440,7 @@ const VideoFormSuspense = ({ videoId }: VideoFormProps) => {
                         Video Link
                       </p>
                       <div className="flex items-center gap-x-2">
-                        <Link href={"/videos/" + video.id}>
+                        <Link prefetch href={"/videos/" + video.id}>
                           <p className="text-sm text-blue-500 line-clamp-1">
                             {fullUrl}
                           </p>

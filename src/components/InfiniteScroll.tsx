@@ -46,7 +46,7 @@ const InfiniteScroll = ({
           {isFetchingNextPage ? "Loading" : "Load More"}
         </Button>
       ) : (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground select-none cursor-default">
           You have reached the end of the list
         </p>
       )}

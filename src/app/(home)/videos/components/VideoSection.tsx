@@ -7,13 +7,15 @@ import { useAuth } from "@clerk/nextjs";
 import VideoPlayer from "@/components/VideoPlayer";
 import VideoBanner from "@/components/VideoBanner";
 import VideoTopRow from "@/components/VideoTopRow";
+import LoadingSkeleton from "@/app/(studio)/components/LoadingSkeleton";
+import ErrorSkeleton from "@/app/(studio)/components/ErrorSkeleton";
 interface VideoSectionProps {
   videoId: string;
 }
 const VideoSection = ({ videoId }: VideoSectionProps) => {
   return (
-    <Suspense fallback={"Loading..."}>
-      <ErrorBoundary fallback={"Error..."}>
+    <Suspense fallback={<LoadingSkeleton />}>
+      <ErrorBoundary fallback={<ErrorSkeleton />}>
         <VideoSectionSuspense videoId={videoId} />
       </ErrorBoundary>
     </Suspense>
@@ -38,10 +40,11 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
     },
   });
   const handlePlay = () => {
-    if (!isSignedIn) return;
     createView.mutate({
       videoId,
     });
+    if (!isSignedIn) return;
+
     createUserView.mutate({
       videoId,
     });

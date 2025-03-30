@@ -23,20 +23,20 @@ const VideoInfo = ({ data, onRemove }: VideoInfoProps) => {
   }, [createdAt]);
   return (
     <div className="flex gap-3">
-      <Link href={`/users/${user.id}`}>
+      <Link prefetch href={`/users/${user.id}`}>
         <UserAvatar imageUrl={user.imageUrl} name={user.name} />
       </Link>
       <div className="flex-1 min-w-0">
-        <Link href={`videos/${videoId}`}>
+        <Link prefetch href={`videos/${videoId}`}>
           <h3 className="font-medium line-clamp-1 lg:line-clamp-2 text-base  break-words">
             {title}
           </h3>
         </Link>
-        <Link href={`/users/${user.id}`}>
+        <Link prefetch href={`/users/${user.id}`}>
           <UserInfo name={user.name} />
         </Link>
-        <Link href={`videos/${videoId}`}>
-          <p>
+        <Link prefetch href={`videos/${videoId}`}>
+          <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
             {compactViews} views • {compactDate}
           </p>
         </Link>

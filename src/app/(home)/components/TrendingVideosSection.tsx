@@ -1,4 +1,6 @@
 "use client";
+import ErrorSkeleton from "@/app/(studio)/components/ErrorSkeleton";
+import LoadingSkeleton from "@/app/(studio)/components/LoadingSkeleton";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import VideoGridCard from "@/components/VideoGridCard";
 import { DEFAULT_LIMIT } from "@/constants";
@@ -8,8 +10,8 @@ import { ErrorBoundary } from "react-error-boundary";
 
 const TrendingVideosSection = () => {
   return (
-    <Suspense fallback={"Loading ..."}>
-      <ErrorBoundary fallback={"Error..."}>
+    <Suspense fallback={<LoadingSkeleton />}>
+      <ErrorBoundary fallback={<ErrorSkeleton />}>
         <TrendingVideosSectionSuspense />
       </ErrorBoundary>
     </Suspense>

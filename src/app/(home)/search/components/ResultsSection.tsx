@@ -1,4 +1,6 @@
 "use client";
+import ErrorSkeleton from "@/app/(studio)/components/ErrorSkeleton";
+import LoadingSkeleton from "@/app/(studio)/components/LoadingSkeleton";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import VideoGridCard from "@/components/VideoGridCard";
 import VideoRowCard from "@/components/VideoRowCard";
@@ -15,8 +17,8 @@ interface ResultsSectionProps {
 
 const ResultsSection = ({ query, categoryId }: ResultsSectionProps) => {
   return (
-    <Suspense key={`${query}-${categoryId}`} fallback={"Loading..."}>
-      <ErrorBoundary fallback={"Error..."}>
+    <Suspense key={`${query}-${categoryId}`} fallback={<LoadingSkeleton />}>
+      <ErrorBoundary fallback={<ErrorSkeleton />}>
         <ResultsSectionSuspense query={query} categoryId={categoryId} />
       </ErrorBoundary>
     </Suspense>

@@ -34,7 +34,7 @@ export const studioRouter = createTRPCRouter({
       z.object({
         cursor: z
           .object({
-            videoId: z.string().uuid(),
+            id: z.string().uuid(),
             updatedAt: z.date(),
           })
           .nullish(),
@@ -58,7 +58,7 @@ export const studioRouter = createTRPCRouter({
                   lt(videosTable.updatedAt, cursor.updatedAt),
                   and(
                     eq(videosTable.updatedAt, cursor.updatedAt),
-                    lt(videosTable.id, cursor.videoId)
+                    lt(videosTable.id, cursor.id)
                   )
                 )
               : undefined

@@ -12,7 +12,7 @@ const VideoGridCard = ({ data, onRemove }: VideoRowCardProps) => {
   const { title, duration, id: videoId, previewUrl, thumbnailUrl } = data;
   return (
     <div className="flex flex-col gap-2 w-full group ">
-      <Link href={`/videos/${videoId}`}>
+      <Link prefetch href={`/videos/${videoId}`}>
         <VideoThumbnail
           duration={duration}
           title={title}

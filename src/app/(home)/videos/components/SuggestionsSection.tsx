@@ -1,4 +1,6 @@
 "use client";
+import ErrorSkeleton from "@/app/(studio)/components/ErrorSkeleton";
+import LoadingSkeleton from "@/app/(studio)/components/LoadingSkeleton";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import VideoGridCard from "@/components/VideoGridCard";
 import VideoRowCard from "@/components/VideoRowCard";
@@ -14,8 +16,8 @@ interface SuggestionsSectionProps {
 
 const SuggestionsSection = ({ videoId, isManual }: SuggestionsSectionProps) => {
   return (
-    <Suspense fallback={"Loading..."}>
-      <ErrorBoundary fallback={"Error..."}>
+    <Suspense fallback={<LoadingSkeleton />}>
+      <ErrorBoundary fallback={<ErrorSkeleton />}>
         <SuggestionsSectionSuspense videoId={videoId} isManual={isManual} />
       </ErrorBoundary>
     </Suspense>

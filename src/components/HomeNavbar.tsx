@@ -12,16 +12,18 @@ const HomeNavbar = () => {
         {/* Menu & Logo */}
 
         <SidebarTrigger />
-        <Link href={"/"}>
+        <Link prefetch href={"/"}>
           <div className="flex items-center gap-1">
             <Image src={"/logo.svg"} width={32} height={32} alt="Logo" />
-            <p className="text-xl tracking-tight font-semibold">ZeeTube</p>
+            <p className="text-xl tracking-tight font-semibold hidden md:flex">
+              ZeeTube
+            </p>
           </div>
         </Link>
       </div>
 
       {/* SearchBar */}
-      <div className="flex flex-1 justify-center max-w-[700px] mx-auto">
+      <div className="flex flex-1 justify-center max-w-[700px] w-full mx-auto px-4">
         <SearchInput />
       </div>
 

@@ -66,7 +66,7 @@ const CommentItem = ({ comment, variant = "comment" }: CommentItemProps) => {
   return (
     <div>
       <div className="flex gap-3  ">
-        <Link href={"/users/" + comment.userId}>
+        <Link prefetch href={"/users/" + comment.userId}>
           <UserAvatar
             size={variant == "comment" ? "lg" : "sm"}
             imageUrl={comment.user.imageUrl}
