@@ -28,7 +28,6 @@ interface CommentFormProps {
 
 const CommentForm = ({
   videoId,
-  onSuccess,
   variant = "comment",
   onCancel,
   parentId,

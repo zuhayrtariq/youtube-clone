@@ -32,7 +32,7 @@ const items = [
 ];
 
 const MainSection = () => {
-  const { userId, isSignedIn } = useAuth();
+  const { isSignedIn } = useAuth();
   const pathName = usePathname();
   const clerk = useClerk();
   return (

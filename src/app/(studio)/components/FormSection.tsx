@@ -21,7 +21,7 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -116,10 +116,47 @@ const VideoFormSuspense = ({ videoId }: VideoFormProps) => {
   const [thumbnailOpenModal, setThumbnailOpenModal] = useState(false);
   const [generateThumbnailOpenModal, setGenerateThumbnailOpenModal] =
     useState(false);
+
   const router = useRouter();
   const [video] = trpc.studio.getOne.useSuspenseQuery({ videoId });
   const [categories] = trpc.categories.getMany.useSuspenseQuery();
   const utils = trpc.useUtils();
+  const form = useForm<z.infer<typeof videoUpdateSchema>>({
+    resolver: zodResolver(videoUpdateSchema),
+    defaultValues: video,
+  });
+  useEffect(() => {
+    const eventSource = new EventSource("/api/sse");
+
+    console.log("CALLED");
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("DATA : ", data);
+      if (data.type === "jobCompleted") {
+        console.log("Job completed, invalidating queries:", data.jobId);
+        utils.studio.getOne.invalidate({
+          videoId,
+        });
+        if (data.jobId == "title-updated") toast.success("AI Title Generated");
+        else if (data.jobId == "description-updated")
+          toast.success("AI Description Generated");
+        else if (data.jobId == "thumbnail-updated")
+          toast.success("AI Thumbnail Generated");
+      }
+    };
+
+    eventSource.onerror = () => {
+      console.error("SSE error");
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [utils, video]);
+  useEffect(() => {
+    form.reset(video); // Update form default values when video changes
+  }, [video, form]);
   const update = trpc.videos.update.useMutation({
     onSuccess: () => {
       toast.success("Video updated successfully");
@@ -187,10 +224,6 @@ const VideoFormSuspense = ({ videoId }: VideoFormProps) => {
     onError: (e) => {
       toast.error("Unable to delete :" + e.message);
     },
-  });
-  const form = useForm<z.infer<typeof videoUpdateSchema>>({
-    resolver: zodResolver(videoUpdateSchema),
-    defaultValues: video,
   });
 
   const onSubmit = async (data: z.infer<typeof videoUpdateSchema>) => {
